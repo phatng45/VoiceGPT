@@ -1,6 +1,6 @@
-import 'dart:math';
-
+import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -10,16 +10,28 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  late SpeechToText _speech;
+  bool _isListening = false;
+  String _input = "abc";
+  double _confidence = 1.0;
 
-  _buildMessageComposer(){
+  @override
+  void initState() {
+    super.initState();
+    _speech = SpeechToText();
+  }
+
+  _buildMessageComposer() {
     return Container(
       color: Colors.white,
-    height: 100,
-child: Column(
-  children: <Widget>[TextField(decoration: InputDecoration(
-    hintText: 'Start typing or talking...'
-  ),)],
-),
+      height: 100,
+      child: Column(
+        children: <Widget>[
+          TextField(
+            decoration: InputDecoration(hintText: 'Start typing or talking...'),
+          )
+        ],
+      ),
     );
   }
 
@@ -43,21 +55,45 @@ child: Column(
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: AvatarGlow(
+        glowColor: Theme.of(context).colorScheme.primary,
+        animate: _isListening,
+        endRadius: 75.0,
+        child: SizedBox(
+          width: 70,
+          height: 70,
+          child: FloatingActionButton(
+            backgroundColor:
+            _isListening? Theme.of(context).colorScheme.primary:
+            Colors.black,
+            child: Icon(
+              _isListening ? Icons.mic : Icons.mic_none,
+              color: Colors.white,
+              size: 30,
+            ),
+            elevation: 0.0,
+            onPressed: () => _listen()
+            // setState(() => _isListening = !_isListening)
+            ,
+          ),
+        ),
+      ),
       body: Column(
         children: [
           Expanded(
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
                   color: Colors.white),
               child: ClipRRect(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
                 child: ListView.builder(
-                  padding: EdgeInsets.only(top: 15),
+                    padding: EdgeInsets.only(top: 15),
                     itemCount: 10,
                     itemBuilder: (BuildContext context, int index) {
                       return Text('1');
@@ -65,8 +101,30 @@ child: Column(
               ),
             ),
           ),
-        _buildMessageComposer()],
+          // _buildMessageComposer()
+        ],
       ),
     );
+  }
+
+  void _listen() async {
+    setState(() => _isListening = !_isListening);
+    return;
+    if (!_isListening) {
+      bool available = await _speech.initialize();
+      if (available) {
+        setState(() => _isListening = true);
+        _speech.listen(
+            onResult: (val) => setState(() {
+                  _input = val.recognizedWords;
+                  if (val.hasConfidenceRating && val.confidence > 0) {
+                    _confidence = val.confidence;
+                  }
+                }));
+      } else {
+        setState(() => _isListening = false);
+        _speech.stop();
+      }
+    }
   }
 }

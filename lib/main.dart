@@ -27,7 +27,9 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.nunitoTextTheme(
           Theme.of(context).textTheme,
         ),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange).copyWith(secondary: const Color(0xFFFEF9EB)),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange)
+            .copyWith(secondary: const Color(0xFFFEF9EB)),
       ),
       debugShowCheckedModeBanner: false,
       home: ChatPage(),
