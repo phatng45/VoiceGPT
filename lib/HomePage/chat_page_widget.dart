@@ -40,6 +40,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         centerTitle: true,
         title: const Text(
           'Chat',
@@ -79,7 +80,7 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
           ),
-          // _buildMessageComposer()
+          _buildMessageComposer()
         ],
       ),
     );
@@ -90,13 +91,16 @@ class _ChatPageState extends State<ChatPage> {
       glowColor: Theme.of(context).colorScheme.primary,
       animate: _isListening,
       endRadius: 75.0,
+      duration: Duration(milliseconds: 2000),
+      repeatPauseDuration: Duration(milliseconds: 200),
       child: SizedBox(
-        width: 70,
-        height: 70,
+        width: 65,
+        height: 65,
         child: FloatingActionButton(
+          shape: CircleBorder(),
           backgroundColor: _isListening
               ? Theme.of(context).colorScheme.primary
-              : Colors.orange.shade300,
+              : Colors.orange.shade200,
           elevation: 0.0,
           onPressed: () => _listen(),
           child: const Icon(
