@@ -41,7 +41,7 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Chat',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
@@ -49,36 +49,14 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.more_horiz),
+            icon: const Icon(Icons.more_horiz),
             iconSize: 30,
             color: Colors.white,
           ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: AvatarGlow(
-        glowColor: Theme.of(context).colorScheme.primary,
-        animate: _isListening,
-        endRadius: 75.0,
-        child: SizedBox(
-          width: 70,
-          height: 70,
-          child: FloatingActionButton(
-            backgroundColor:
-            _isListening? Theme.of(context).colorScheme.primary:
-            Colors.black,
-            child: Icon(
-              _isListening ? Icons.mic : Icons.mic_none,
-              color: Colors.white,
-              size: 30,
-            ),
-            elevation: 0.0,
-            onPressed: () => _listen()
-            // setState(() => _isListening = !_isListening)
-            ,
-          ),
-        ),
-      ),
+      floatingActionButton: _buildFloatingActionButton(context),
       body: Column(
         children: [
           Expanded(
@@ -103,6 +81,30 @@ class _ChatPageState extends State<ChatPage> {
           ),
           // _buildMessageComposer()
         ],
+      ),
+    );
+  }
+
+  AvatarGlow _buildFloatingActionButton(BuildContext context) {
+    return AvatarGlow(
+      glowColor: Theme.of(context).colorScheme.primary,
+      animate: _isListening,
+      endRadius: 75.0,
+      child: SizedBox(
+        width: 70,
+        height: 70,
+        child: FloatingActionButton(
+          backgroundColor: _isListening
+              ? Theme.of(context).colorScheme.primary
+              : Colors.orange.shade300,
+          elevation: 0.0,
+          onPressed: () => _listen(),
+          child: const Icon(
+            Icons.mic,
+            color: Colors.white,
+            size: 30,
+          ),
+        ),
       ),
     );
   }
