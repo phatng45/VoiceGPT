@@ -11,8 +11,11 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   late SpeechToText _speech;
+  final List<bool> _speechOptions = <bool>[false, true];
+
   bool _isListening = false;
   String _input = "abc";
+  String _hintText = "Hold to Talk";
   double _confidence = 1.0;
 
   @override
@@ -24,13 +27,119 @@ class _ChatPageState extends State<ChatPage> {
   _buildMessageComposer() {
     return Container(
       color: Colors.white,
-      height: 100,
       child: Column(
-        children: <Widget>[
-          TextField(
-            decoration: InputDecoration(hintText: 'Start typing or talking...'),
-          )
+        children: [
+          const Divider(
+            indent: 20,
+            endIndent: 20,
+            thickness: 1,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 2.0),
+            child: Stack(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                        isDense: true,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(50),
+                            borderSide: BorderSide.none),
+                        hintText: 'Start typing or talking...',
+                        fillColor: Colors.grey[150],
+                        filled: true),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 135),
+                  child: Center(
+                      child: Text(
+                    _hintText,
+                    style: const TextStyle(
+                        color: Colors.orangeAccent,
+                        fontStyle: FontStyle.italic),
+                  )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Spacer(),
+                      Expanded(flex: 1, child: _buildMicButton()),
+                      Expanded(
+                        flex: 1,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10, top: 55),
+                          child: Container(
+                            padding: EdgeInsets.zero,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(10))),
+                            child: ToggleButtons(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10)),
+                              selectedBorderColor: Colors.orange[700],
+                              selectedColor: Colors.white,
+                              // disabledColor: Colors.white,
+                              // color
+                              fillColor: Colors.orange.shade200,
+                              color: Colors.orange[400],
+                              constraints: const BoxConstraints(
+                                minHeight: 40.0,
+                                minWidth: 62.0,
+                              ),
+                              isSelected: _speechOptions,
+                              children: const [Text('Manual'), Text('Auto')],
+                              onPressed: (int index) {
+                                setState(() {
+                                  for (int i = 0;
+                                      i < _speechOptions.length;
+                                      i++) {
+                                    _speechOptions[i] = i == index;
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+                // SizedBox(height: 50,),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  AvatarGlow _buildMicButton() {
+    return AvatarGlow(
+      glowColor: Theme.of(context).colorScheme.primary,
+      animate: _isListening,
+      endRadius: 75.0,
+      curve: Curves.easeInOut,
+      child: RawMaterialButton(
+        onPressed: () => _listen(),
+        elevation: 0.0,
+        fillColor: _isListening
+            ? Theme.of(context).colorScheme.primary
+            : Colors.orange.shade200,
+        child: Icon(
+          Icons.mic,
+          size: 30.0,
+          color: Colors.white,
+        ),
+        padding: EdgeInsets.fromLTRB(15, 18, 15, 15),
+        shape: CircleBorder(),
       ),
     );
   }
@@ -56,8 +165,14 @@ class _ChatPageState extends State<ChatPage> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _buildFloatingActionButton(context),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: _buildFloatingActionButton(context),
+      // bottomNavigationBar:  BottomAppBar(
+      //   height: 80,
+      //   shape: CircularNotchedRectangle(),
+      //   // color: Colors.blue,
+      //   // surfaceTintColor: Colors.blue,
+      // ),
       body: Column(
         children: [
           Expanded(
@@ -91,8 +206,7 @@ class _ChatPageState extends State<ChatPage> {
       glowColor: Theme.of(context).colorScheme.primary,
       animate: _isListening,
       endRadius: 75.0,
-      duration: Duration(milliseconds: 2000),
-      repeatPauseDuration: Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
       child: SizedBox(
         width: 65,
         height: 65,

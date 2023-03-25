@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        useMaterial3: true,
+        // useMaterial3: true,
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
@@ -25,12 +25,19 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        textTheme: GoogleFonts.nunitoTextTheme(
-          Theme.of(context).textTheme,
-        ),
+        fontFamily: GoogleFonts.nunito().fontFamily,
+        // textTheme: GoogleFonts.nunitoTextTheme(
+        //   Theme.of(context).textTheme,
+        // ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange)
+        // primaryColor: Colors.orange,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange,)
             .copyWith(secondary: const Color(0xFFFEF9EB)),
+        // bottomAppBarTheme: BottomAppBarTheme(
+        //   // color: Colors.orange,
+        //   // surfaceTintColor: Colors.orange,
+        //   // color: Colors.black
+        // )
       ),
       debugShowCheckedModeBanner: false,
       home: ChatPage(),
