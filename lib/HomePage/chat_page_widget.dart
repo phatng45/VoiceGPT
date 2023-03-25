@@ -1,6 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:voicegpt/Models/message_model.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -11,9 +12,56 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   late SpeechToText _speech;
+  late TextEditingController _textEditingController;
+
   final List<bool> _speechOptions = <bool>[false, true];
 
+  final List<Message> _messages = <Message>[
+    Message(
+      isUser: true,
+      text: 'Tell me a good place to go in United States',
+    ),
+    Message(
+      isUser: false,
+      text: 'IDK, try asking the actual ChatGPT',
+    ),
+    Message(
+      isUser: true,
+      text: 'No i want to ask you',
+    ),
+    Message(
+      isUser: false,
+      text: 'But i really dont know',
+    ),
+    Message(
+      isUser: true,
+      text: 'Fine',
+    ),
+    Message(
+      isUser: true,
+      text: 'Tell me a good place to go in uy yu yu asd asd',
+    ),
+    Message(
+      isUser: false,
+      text: 'IDK, try asking the actual ChatGPT',
+    ),
+    Message(
+      isUser: true,
+      text: 'No i want to ask you',
+    ),
+    Message(
+      isUser: false,
+      text: 'But i really dont know',
+    ),
+    Message(
+      isUser: true,
+      text: 'Fine',
+    ),
+  ];
+
   bool _isListening = false;
+  bool _isTextFieldNotEmpty = false;
+
   String _input = "abc";
   String _hintText = "Hold to Talk";
   double _confidence = 1.0;
@@ -22,6 +70,65 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
     _speech = SpeechToText();
+    _textEditingController = TextEditingController();
+    _textEditingController.addListener(() {
+      final isTextFieldNotEmpty = _textEditingController.text.isNotEmpty;
+      setState(() {
+        _isTextFieldNotEmpty = isTextFieldNotEmpty;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        centerTitle: true,
+        title: const Text(
+          'Chat',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        elevation: 0.0,
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(Icons.more_horiz),
+            iconSize: 30,
+            color: Colors.white,
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                  color: Colors.white),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20)),
+                child: ListView.builder(
+                    padding: EdgeInsets.only(top: 15),
+                    itemCount: _messages.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final Message message = _messages[index];
+                      return message.isUser
+                          ? _buildUserMessage(_messages[index])
+                          : _buildAppMessage(_messages[index]);
+                    }),
+              ),
+            ),
+          ),
+          _buildMessageComposer()
+        ],
+      ),
+    );
   }
 
   _buildMessageComposer() {
@@ -40,15 +147,32 @@ class _ChatPageState extends State<ChatPage> {
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                        isDense: true,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(50),
-                            borderSide: BorderSide.none),
-                        hintText: 'Start typing or talking...',
-                        fillColor: Colors.grey[150],
-                        filled: true),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _textEditingController,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50),
+                                borderSide: BorderSide.none),
+                            hintText: 'Start typing or talking...',
+                            fillColor: Colors.grey[150],
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      _isTextFieldNotEmpty
+                          ? IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.send_rounded,
+                                color: Colors.orange,
+                                size: 25,
+                              ))
+                          : const SizedBox.shrink()
+                    ],
                   ),
                 ),
                 Padding(
@@ -79,8 +203,8 @@ class _ChatPageState extends State<ChatPage> {
                             height: 40,
                             decoration: const BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.all(
-                                    Radius.circular(10))),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10))),
                             child: ToggleButtons(
                               borderRadius:
                                   const BorderRadius.all(Radius.circular(10)),
@@ -144,89 +268,6 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        centerTitle: true,
-        title: const Text(
-          'Chat',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        elevation: 0.0,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_horiz),
-            iconSize: 30,
-            color: Colors.white,
-          ),
-        ],
-      ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: _buildFloatingActionButton(context),
-      // bottomNavigationBar:  BottomAppBar(
-      //   height: 80,
-      //   shape: CircularNotchedRectangle(),
-      //   // color: Colors.blue,
-      //   // surfaceTintColor: Colors.blue,
-      // ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20)),
-                  color: Colors.white),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20)),
-                child: ListView.builder(
-                    padding: EdgeInsets.only(top: 15),
-                    itemCount: 10,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Text('1');
-                    }),
-              ),
-            ),
-          ),
-          _buildMessageComposer()
-        ],
-      ),
-    );
-  }
-
-  AvatarGlow _buildFloatingActionButton(BuildContext context) {
-    return AvatarGlow(
-      glowColor: Theme.of(context).colorScheme.primary,
-      animate: _isListening,
-      endRadius: 75.0,
-      curve: Curves.easeInOut,
-      child: SizedBox(
-        width: 65,
-        height: 65,
-        child: FloatingActionButton(
-          shape: CircleBorder(),
-          backgroundColor: _isListening
-              ? Theme.of(context).colorScheme.primary
-              : Colors.orange.shade200,
-          elevation: 0.0,
-          onPressed: () => _listen(),
-          child: const Icon(
-            Icons.mic,
-            color: Colors.white,
-            size: 30,
-          ),
-        ),
-      ),
-    );
-  }
-
   void _listen() async {
     setState(() => _isListening = !_isListening);
     return;
@@ -246,5 +287,110 @@ class _ChatPageState extends State<ChatPage> {
         _speech.stop();
       }
     }
+  }
+
+  Widget _buildAppMessage(Message m) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 10),
+                width: 35,
+                height: 35,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 1,
+                        offset: Offset(0, 1), // changes position of shadow
+                      ),
+                    ]),
+                child: Icon(
+                  Icons.sentiment_satisfied,
+                  color: Colors.orange,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 8, 10, 0),
+                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      m.text,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: m.isUser ? Colors.white : Colors.black54,
+                          fontSize: 16),
+                    ),
+                    Text(
+                      m.time,
+                      style: TextStyle(
+                          color: m.isUser ? Colors.white : Colors.black54,
+                          fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Container(width: 30, height: 30, child: _buildCurrentMessageState()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserMessage(Message m) {
+    return Align(
+      alignment: m.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: m.isUser
+            ? EdgeInsets.fromLTRB(100, 8, 8, 0)
+            : EdgeInsets.fromLTRB(8, 8, 100, 0),
+        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+        decoration: BoxDecoration(
+          color: m.isUser ? Colors.orangeAccent : Colors.grey[200],
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment:
+              m.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          children: [
+            Text(
+              m.text,
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: m.isUser ? Colors.white : Colors.black54,
+                  fontSize: 16),
+            ),
+            Text(
+              m.time,
+              style: TextStyle(
+                  color: m.isUser ? Colors.white : Colors.black54,
+                  fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildCurrentMessageState() {
+    return Container(
+      color: Colors.pink,
+    );
   }
 }
