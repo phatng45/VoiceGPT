@@ -1,5 +1,6 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicegpt/Models/message_model.dart';
 
@@ -22,17 +23,17 @@ class _ChatPageState extends State<ChatPage> {
       text: 'Tell me a good place to go in United States',
     ),
     Message(
-      isUser: false,
-      text: 'IDK, try asking the actual ChatGPT',
-    ),
+        isUser: false,
+        text: 'IDK, try asking the actual ChatGPT',
+        state: MessageState.CanPlay),
     Message(
       isUser: true,
       text: 'No i want to ask you',
     ),
     Message(
-      isUser: false,
-      text: 'But i really dont know',
-    ),
+        isUser: false,
+        text: 'But i really dont know',
+        state: MessageState.Speaking),
     Message(
       isUser: true,
       text: 'Fine',
@@ -44,6 +45,7 @@ class _ChatPageState extends State<ChatPage> {
     Message(
       isUser: false,
       text: 'IDK, try asking the actual ChatGPT',
+      state: MessageState.Loading
     ),
     Message(
       isUser: true,
@@ -346,7 +348,11 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ],
           ),
-          Container(width: 30, height: 30, child: _buildCurrentMessageState()),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+                width: 30, height: 30, child: _buildCurrentVoiceGPTState(m)),
+          ),
         ],
       ),
     );
@@ -388,9 +394,21 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  _buildCurrentMessageState() {
+  _buildCurrentVoiceGPTState(Message m) {
     return Container(
-      color: Colors.pink,
-    );
+        child: m.state == MessageState.Null
+            ? null
+            : m.state == MessageState.Loading
+                ? LoadingAnimationWidget.twoRotatingArc(
+                    size: 20, color: Colors.orange)
+                : m.state == MessageState.Speaking
+                    ? LoadingAnimationWidget.beat(
+                        size: 20, color: Colors.orange)
+                    : m.state == MessageState.CanPlay
+                        ? const Icon(
+                            Icons.play_circle_outline_rounded,
+                            color: Colors.orange,
+                          )
+                        : null);
   }
 }

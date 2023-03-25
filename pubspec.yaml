@@ -38,6 +38,7 @@ dependencies:
   google_fonts: ^4.0.3
   speech_to_text: ^6.1.1
   avatar_glow: ^2.0.2
+  loading_animation_widget: ^1.2.0+4
 
 dev_dependencies:
   flutter_test:
