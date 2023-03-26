@@ -189,7 +189,7 @@ class _ChatPageState extends State<ChatPage> {
                 _buildLanguageBottomSheet(context);
               },
             ),
-            Divider(
+            const Divider(
               color: Colors.black45,
               indent: 15,
               endIndent: 15,
@@ -210,7 +210,7 @@ class _ChatPageState extends State<ChatPage> {
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20))),
       builder: (BuildContext context) {
@@ -220,9 +220,9 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20.0),
-                child: const Text(
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
                   'Select Language',
                   style: TextStyle(fontSize: 25),
                 ),
@@ -253,7 +253,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         ),
                       ),
-                      Text('English (US)')
+                      const Text('English (US)')
                     ],
                   ),
                   Column(
@@ -278,7 +278,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         ),
                       ),
-                      Text('Vietnamese (VN)')
+                      const Text('Vietnamese (VN)')
                     ],
                   )
                 ],
@@ -416,13 +416,13 @@ class _ChatPageState extends State<ChatPage> {
         fillColor: _isListening
             ? Theme.of(context).colorScheme.primary
             : Colors.orange.shade200,
-        child: Icon(
+        padding: const EdgeInsets.fromLTRB(15, 18, 15, 15),
+        shape: const CircleBorder(),
+        child: const Icon(
           Icons.mic,
           size: 30.0,
           color: Colors.white,
         ),
-        padding: EdgeInsets.fromLTRB(15, 18, 15, 15),
-        shape: CircleBorder(),
       ),
     );
   }
@@ -464,10 +464,10 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 Flexible(
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: 275),
+                    constraints: const BoxConstraints(maxWidth: 275),
                     child: Container(
-                      margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                      margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
@@ -531,10 +531,10 @@ class _ChatPageState extends State<ChatPage> {
       alignment: Alignment.centerRight,
       child: Flexible(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 300),
+          constraints: const BoxConstraints(maxWidth: 300),
           child: Container(
-            margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
-            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+            margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.orangeAccent,
               borderRadius: BorderRadius.circular(16),
@@ -545,14 +545,14 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 Text(
                   m.text,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Colors.white,
                       fontSize: 16),
                 ),
                 Text(
                   m.time,
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ],
             ),
