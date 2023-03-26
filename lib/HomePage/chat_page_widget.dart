@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
     ),
     Message(
         isUser: false,
-        text: 'IDK, try asking the actual ChatGPT',
+        text: 'IDK, try asking the actual ChatGPT ad  asd asd sadas  as',
         state: SystemMessageState.CanPlay),
     Message(
       isUser: true,
@@ -237,14 +237,15 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {},
                         iconSize: 50,
                         icon: Container(
-                          decoration:
-                              const BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                            BoxShadow(
-                              color: Colors.black38,
-                              offset: Offset(0, 1),
-                              blurRadius: 2.0,
-                            ),
-                          ]),
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black38,
+                                  offset: Offset(0, 1),
+                                  blurRadius: 2.0,
+                                ),
+                              ]),
                           child: Flag.fromCode(
                             FlagsCode.US,
                             borderRadius: 60,
@@ -261,14 +262,15 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {},
                         iconSize: 50,
                         icon: Container(
-                          decoration:
-                              const BoxDecoration(shape: BoxShape.circle, boxShadow: [
-                            BoxShadow(
-                              color: Colors.black38,
-                              offset: Offset(0, 1),
-                              blurRadius: 2.0,
-                            ),
-                          ]),
+                          decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black38,
+                                  offset: Offset(0, 1),
+                                  blurRadius: 2.0,
+                                ),
+                              ]),
                           child: Flag.fromCode(
                             FlagsCode.VN,
                             borderRadius: 60,
@@ -426,124 +428,135 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   void _listen() async {
-    setState(() => _isListening = !_isListening);
-    return;
+    // setState(() => _isListening = !_isListening);
+    // return;
     if (!_isListening) {
-      bool available = await _speech.initialize();
+      bool available = await _speech.initialize(
+        onStatus: (val) => print('onStatus $val'),
+        onError: (val) => print('onError $val'),
+      );
       if (available) {
         setState(() => _isListening = true);
         _speech.listen(
             onResult: (val) => setState(() {
+                  print('onResult $val');
                   _input = val.recognizedWords;
                   if (val.hasConfidenceRating && val.confidence > 0) {
                     _confidence = val.confidence;
                   }
                 }));
-      } else {
-        setState(() => _isListening = false);
-        _speech.stop();
       }
+    } else {
+      setState(() => _isListening = false);
+      _speech.stop();
     }
   }
 
   Widget _buildSystemMessage(Message m) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Row(
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                margin: EdgeInsets.symmetric(horizontal: 10),
-                width: 35,
-                height: 35,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.3),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset: Offset(0, 1), // changes position of shadow
+      child: Expanded(
+        child: Row(
+          // crossAxisAlignment: CrossAxisAlignment.center ,
+          children: [
+            // Align(alignment: Alignment.bottomRight,child: ,)  ,
+            _buildSystemChatIcon(),
+
+            Flexible(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 275),
+                child: Container(
+                  margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                  // width: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        m.text,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: m.isUser ? Colors.white : Colors.black54,
+                            fontSize: 16),
                       ),
-                    ]),
-                child: Icon(
-                  Icons.sentiment_satisfied,
-                  color: Colors.orange,
+                      Text(
+                        m.time,
+                        style: TextStyle(
+                            color: m.isUser ? Colors.white : Colors.black54,
+                            fontSize: 12),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              Container(
-                margin: EdgeInsets.fromLTRB(0, 8, 10, 0),
-                padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      m.text,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: m.isUser ? Colors.white : Colors.black54,
-                          fontSize: 16),
-                    ),
-                    Text(
-                      m.time,
-                      style: TextStyle(
-                          color: m.isUser ? Colors.white : Colors.black54,
-                          fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Container(
-                width: 30, height: 30, child: _buildCurrentVoiceGPTState(m)),
-          ),
-        ],
+            ),
+            _buildCurrentVoiceGPTState(m),
+
+          ],
+        ),
+      ),
+    );
+  }
+
+  Container _buildSystemChatIcon() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+      width: 30,
+      height: 30,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 1,
+              offset: Offset(0, 1), // changes position of shadow
+            ),
+          ]),
+      child: const Icon(
+        Icons.sentiment_satisfied,
+        color: Colors.orange,
       ),
     );
   }
 
   Widget _buildUserMessage(Message m) {
     return Align(
-      alignment: m.isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: m.isUser
-            ? EdgeInsets.fromLTRB(100, 8, 8, 0)
-            : EdgeInsets.fromLTRB(8, 8, 100, 0),
-        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-        decoration: BoxDecoration(
-          color: m.isUser ? Colors.orangeAccent : Colors.grey[200],
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment:
-              m.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Text(
-              m.text,
-              style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: m.isUser ? Colors.white : Colors.black54,
-                  fontSize: 16),
+      alignment: Alignment.centerRight,
+      child: Flexible(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 300),
+          child: Container(
+            margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+            padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.orangeAccent,
+              borderRadius: BorderRadius.circular(16),
             ),
-            Text(
-              m.time,
-              style: TextStyle(
-                  color: m.isUser ? Colors.white : Colors.black54,
-                  fontSize: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  m.text,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      fontSize: 16),
+                ),
+                Text(
+                  m.time,
+                  style: TextStyle(color: Colors.white, fontSize: 12),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
