@@ -138,82 +138,87 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Drawer _buildEndDrawer2(BuildContext context) {
-    return Drawer(
-        backgroundColor: Colors.orange.shade50,
-        child: ListView(children: [
-          SizedBox(
-            height: 120,
-            child: DrawerHeader(
-                child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: Text(
-                      'Settings',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 25),
-                    )),
-                decoration: BoxDecoration(
-                  color: Colors.orange,
-                )),
-          ),
-          SwitchListTile(
-            title: Text(
-              'Dark mode',
+  ClipRRect _buildEndDrawer2(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+      child: Drawer(
+          backgroundColor: Colors.orange.shade50,
+          child: ListView(children: [
+            SizedBox(
+              height: 120,
+              child: DrawerHeader(
+                  child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Text(
+                        'Settings',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 25),
+                      )),
+                  decoration: BoxDecoration(
+                    color: Colors.orange,
+                  )),
             ),
-            secondary: Icon(Icons.dark_mode_outlined),
-            value: _darkMode,
-            activeColor: Colors.orangeAccent,
-            onChanged: (value) => setState(() {
-              _darkMode = value;
-            }),
-          ),
-          SwitchListTile(
-            title: Text('Auto TTS'),
-            secondary: Icon(Icons.speaker_notes_outlined),
-            value: _autoTTS,
-            activeColor: Colors.orangeAccent,
-            onChanged: (value) => setState(() {
-              _autoTTS = value;
-            }),
-          ),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              // childrenPadding: EdgeInsets.zero,
-              title: Text('Languages'),
-              leading: Icon(Icons.language),
-              children: [
-                ListTile(
-                  visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                  contentPadding: EdgeInsets.only(left: 50),
-                  title: Text('English'),
-                  onTap: () {},
-                ),
-                ListTile(
-                  visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                  contentPadding: EdgeInsets.only(left: 50),
-                  title: Text('Vietnamese'),
-                  onTap: () {},
-                ),
-              ],
+            SwitchListTile(
+              title: Text(
+                'Dark mode',
+              ),
+              secondary: Icon(Icons.dark_mode_outlined),
+              value: _darkMode,
+              activeColor: Colors.orangeAccent,
+              onChanged: (value) => setState(() {
+                _darkMode = value;
+              }),
             ),
-          ),
-          Divider(
-            color: Colors.black45,
-            indent: 15,
-            endIndent: 15,
-          ),
-          ListTile(
-            textColor: Colors.redAccent,
-            title: Text('Remove history'),
-            leading: Icon(
-              Icons.delete,
-              color: Colors.redAccent,
+            SwitchListTile(
+              title: Text('Auto TTS'),
+              secondary: Icon(Icons.speaker_notes_outlined),
+              value: _autoTTS,
+              activeColor: Colors.orangeAccent,
+              onChanged: (value) => setState(() {
+                _autoTTS = value;
+              }),
             ),
-          ),
-        ]));
+            Theme(
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                // childrenPadding: EdgeInsets.zero,
+                title: Text('Languages'),
+                leading: Icon(Icons.language),
+                children: [
+                  ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    contentPadding: EdgeInsets.only(left: 50),
+                    title: Text('English'),
+                    onTap: () {},
+                  ),
+                  ListTile(
+                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                    contentPadding: EdgeInsets.only(left: 50),
+                    title: Text('Vietnamese'),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+            Divider(
+              color: Colors.black45,
+              indent: 15,
+              endIndent: 15,
+            ),
+            ListTile(
+              textColor: Colors.redAccent,
+              title: Text('Remove history'),
+              leading: Icon(
+                Icons.delete,
+                color: Colors.redAccent,
+              ),
+            ),
+          ])),
+    );
   }
 
   _buildMessageComposer() {
