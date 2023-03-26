@@ -25,7 +25,7 @@ class _ChatPageState extends State<ChatPage> {
     Message(
         isUser: false,
         text: 'IDK, try asking the actual ChatGPT',
-        state: MessageState.CanPlay),
+        state: SystemMessageState.CanPlay),
     Message(
       isUser: true,
       text: 'No i want to ask you',
@@ -33,7 +33,7 @@ class _ChatPageState extends State<ChatPage> {
     Message(
         isUser: false,
         text: 'But i really dont know',
-        state: MessageState.Speaking),
+        state: SystemMessageState.Speaking),
     Message(
       isUser: true,
       text: 'Fine',
@@ -43,10 +43,9 @@ class _ChatPageState extends State<ChatPage> {
       text: 'Tell me a good place to go in uy yu yu asd asd',
     ),
     Message(
-      isUser: false,
-      text: 'IDK, try asking the actual ChatGPT',
-      state: MessageState.Loading
-    ),
+        isUser: false,
+        text: 'IDK, try asking the actual ChatGPT',
+        state: SystemMessageState.Loading),
     Message(
       isUser: true,
       text: 'No i want to ask you',
@@ -122,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
                       final Message message = _messages[index];
                       return message.isUser
                           ? _buildUserMessage(_messages[index])
-                          : _buildAppMessage(_messages[index]);
+                          : _buildSystemMessage(_messages[index]);
                     }),
               ),
             ),
@@ -221,7 +220,7 @@ class _ChatPageState extends State<ChatPage> {
                                 minWidth: 62.0,
                               ),
                               isSelected: _speechOptions,
-                              children: const [Text('Manual'), Text('Auto')],
+                              children: const [Text('Touch'), Text('Hold')],
                               onPressed: (int index) {
                                 setState(() {
                                   for (int i = 0;
@@ -291,7 +290,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  Widget _buildAppMessage(Message m) {
+  Widget _buildSystemMessage(Message m) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Row(
@@ -396,15 +395,17 @@ class _ChatPageState extends State<ChatPage> {
 
   _buildCurrentVoiceGPTState(Message m) {
     return Container(
-        child: m.state == MessageState.Null
+        child: m.state == SystemMessageState.Null
             ? null
-            : m.state == MessageState.Loading
-                ? LoadingAnimationWidget.twoRotatingArc(
-                    size: 20, color: Colors.orange)
-                : m.state == MessageState.Speaking
-                    ? LoadingAnimationWidget.beat(
-                        size: 20, color: Colors.orange)
-                    : m.state == MessageState.CanPlay
+            : m.state == SystemMessageState.Loading
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 6.0),
+                    child: LoadingAnimationWidget.twoRotatingArc(
+                        size: 20, color: Colors.green),
+                  )
+                : m.state == SystemMessageState.Speaking
+                    ? LoadingAnimationWidget.beat(size: 20, color: Colors.red)
+                    : m.state == SystemMessageState.CanPlay
                         ? const Icon(
                             Icons.play_circle_outline_rounded,
                             color: Colors.orange,

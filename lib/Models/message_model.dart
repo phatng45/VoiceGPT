@@ -2,16 +2,15 @@ class Message {
   final String text;
   final bool isUser;
   final String time;
-  final MessageState state;
+  final SystemMessageState state;
 
   Message({
     required this.isUser,
     this.text = '',
     this.time = '00:00',
-    this.state = MessageState.Null,
-  });
+    this.state = SystemMessageState.Null});
 }
 
-enum MessageState{
-  Null, Loading, Speaking, CanPlay, Recording,
+enum SystemMessageState{
+Null, Loading, Speaking, CanPlay,
 }
