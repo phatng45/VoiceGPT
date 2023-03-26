@@ -95,6 +95,30 @@ class _ChatPageState extends State<ChatPage> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         elevation: 0.0,
+        leadingWidth: 120,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Row(
+            children: [
+              IconButton(
+                splashColor: Colors.orangeAccent,
+                onPressed: () => _buildLanguageBottomSheet(context),
+                iconSize: 10,
+                icon: Flag.fromCode(
+                  FlagsCode.US,
+                  width: 25,
+                  height: 25,
+                  borderRadius: 20,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Text(
+                'EN',
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        ),
         actions: [
           Builder(
             builder: (context) => IconButton(
@@ -375,7 +399,7 @@ class _ChatPageState extends State<ChatPage> {
                               color: Colors.orange[400],
                               constraints: const BoxConstraints(
                                 minHeight: 40.0,
-                                minWidth: 62.0,
+                                minWidth: 55.0,
                               ),
                               isSelected: _speechOptions,
                               children: const [Text('Touch'), Text('Hold')],
@@ -467,7 +491,8 @@ class _ChatPageState extends State<ChatPage> {
                     constraints: const BoxConstraints(maxWidth: 275),
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 25, vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
@@ -568,12 +593,16 @@ class _ChatPageState extends State<ChatPage> {
             ? null
             : m.state == SystemMessageState.Loading
                 ? Padding(
-                    padding: const EdgeInsets.only(top: 6.0),
+                    padding: const EdgeInsets.only(top: 10.0),
                     child: LoadingAnimationWidget.twoRotatingArc(
                         size: 20, color: Colors.green),
                   )
                 : m.state == SystemMessageState.Speaking
-                    ? LoadingAnimationWidget.beat(size: 20, color: Colors.red)
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 10.0),
+                        child: LoadingAnimationWidget.beat(
+                            size: 20, color: Colors.red),
+                      )
                     : m.state == SystemMessageState.CanPlay
                         ? const Icon(
                             Icons.play_circle_outline_rounded,
