@@ -1,4 +1,5 @@
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -181,28 +182,12 @@ class _ChatPageState extends State<ChatPage> {
                 _autoTTS = value;
               }),
             ),
-            Theme(
-              data:
-                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                // childrenPadding: EdgeInsets.zero,
-                title: Text('Languages'),
-                leading: Icon(Icons.language),
-                children: [
-                  ListTile(
-                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                    contentPadding: EdgeInsets.only(left: 50),
-                    title: Text('English'),
-                    onTap: () {},
-                  ),
-                  ListTile(
-                    visualDensity: VisualDensity(horizontal: 0, vertical: -4),
-                    contentPadding: EdgeInsets.only(left: 50),
-                    title: Text('Vietnamese'),
-                    onTap: () {},
-                  ),
-                ],
-              ),
+            ListTile(
+              title: Text('Languages'),
+              leading: Icon(Icons.language),
+              onTap: () {
+                _buildLanguageBottomSheet(context);
+              },
             ),
             Divider(
               color: Colors.black45,
@@ -218,6 +203,88 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
           ])),
+    );
+  }
+
+  Future<void> _buildLanguageBottomSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      builder: (BuildContext context) {
+        return Container(
+          height: 200,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
+                child: const Text(
+                  'Select Language',
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+              Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {},
+                        iconSize: 50,
+                        icon: Container(
+                          decoration:
+                              const BoxDecoration(shape: BoxShape.circle, boxShadow: [
+                            BoxShadow(
+                              color: Colors.black38,
+                              offset: Offset(0, 1),
+                              blurRadius: 2.0,
+                            ),
+                          ]),
+                          child: Flag.fromCode(
+                            FlagsCode.US,
+                            borderRadius: 60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Text('English (US)')
+                    ],
+                  ),
+                  Column(
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {},
+                        iconSize: 50,
+                        icon: Container(
+                          decoration:
+                              const BoxDecoration(shape: BoxShape.circle, boxShadow: [
+                            BoxShadow(
+                              color: Colors.black38,
+                              offset: Offset(0, 1),
+                              blurRadius: 2.0,
+                            ),
+                          ]),
+                          child: Flag.fromCode(
+                            FlagsCode.VN,
+                            borderRadius: 60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Text('Vietnamese (VN)')
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
