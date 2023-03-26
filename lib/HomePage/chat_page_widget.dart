@@ -455,50 +455,50 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildSystemMessage(Message m) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Expanded(
-        child: Row(
-          // crossAxisAlignment: CrossAxisAlignment.center ,
-          children: [
-            // Align(alignment: Alignment.bottomRight,child: ,)  ,
-            _buildSystemChatIcon(),
-
-            Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: 275),
-                child: Container(
-                  margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
-                  // width: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        m.text,
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: m.isUser ? Colors.white : Colors.black54,
-                            fontSize: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          _buildSystemChatIcon(),
+          Expanded(
+            child: Row(
+              children: [
+                Flexible(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: 275),
+                    child: Container(
+                      margin: EdgeInsets.fromLTRB(8, 8, 8, 0),
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                      Text(
-                        m.time,
-                        style: TextStyle(
-                            color: m.isUser ? Colors.white : Colors.black54,
-                            fontSize: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            m.text,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: m.isUser ? Colors.white : Colors.black54,
+                                fontSize: 16),
+                          ),
+                          Text(
+                            m.time,
+                            style: TextStyle(
+                                color: m.isUser ? Colors.white : Colors.black54,
+                                fontSize: 12),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                _buildCurrentVoiceGPTState(m),
+              ],
             ),
-            _buildCurrentVoiceGPTState(m),
-
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -516,7 +516,7 @@ class _ChatPageState extends State<ChatPage> {
               color: Colors.grey.withOpacity(0.3),
               spreadRadius: 1,
               blurRadius: 1,
-              offset: Offset(0, 1), // changes position of shadow
+              offset: const Offset(0, 1),
             ),
           ]),
       child: const Icon(
