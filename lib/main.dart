@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:voicegpt/app_translation.dart';
 
 import 'HomePage/chat_page_widget.dart';
 
@@ -13,35 +15,19 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       theme: ThemeData(
-        // useMaterial3: true,
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         fontFamily: GoogleFonts.nunito().fontFamily,
-        // textTheme: GoogleFonts.nunitoTextTheme(
-        //   Theme.of(context).textTheme,
-        // ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        // primaryColor: Colors.orange,
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange,)
-            .copyWith(secondary: const Color(0xFFFEF9EB)),
-        // bottomAppBarTheme: BottomAppBarTheme(
-        //   // color: Colors.orange,
-        //   // surfaceTintColor: Colors.orange,
-        //   // color: Colors.black
-        // )
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.orange,
+        ).copyWith(secondary: const Color(0xFFFEF9EB)),
       ),
       debugShowCheckedModeBanner: false,
       home: ChatPage(),
-
+      translations: AppTranslation(),
+      fallbackLocale: const Locale('en', 'US'),
+      locale: Get.deviceLocale ?? const Locale('en', 'US'),
     );
   }
 }

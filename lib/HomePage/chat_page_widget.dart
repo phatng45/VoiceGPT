@@ -1,6 +1,7 @@
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicegpt/Models/message_model.dart';
@@ -63,7 +64,7 @@ class _ChatPageState extends State<ChatPage> {
   bool _autoTTS = false;
 
   String _input = "abc";
-  String _hintText = "Hold to Talk";
+  String _hintText = 'holdToTalk'.tr;
   double _confidence = 1.0;
 
   @override
@@ -86,9 +87,9 @@ class _ChatPageState extends State<ChatPage> {
       appBar: AppBar(
         backgroundColor: Colors.orange,
         centerTitle: true,
-        title: const Text(
-          'Chat',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          'chat'.tr,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         elevation: 0.0,
         leadingWidth: 120,
@@ -108,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
                   fit: BoxFit.cover,
                 ),
               ),
-              Text(
+              const Text(
                 'EN',
                 style: TextStyle(color: Colors.white),
               )
@@ -166,25 +167,25 @@ class _ChatPageState extends State<ChatPage> {
       child: Drawer(
           backgroundColor: Colors.orange.shade50,
           child: ListView(children: [
-            SizedBox(
+             SizedBox(
               height: 120,
               child: DrawerHeader(
+                  decoration: const BoxDecoration(
+                    color: Colors.orange,
+                  ),
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        'Settings',
-                        style: TextStyle(
+                        'settings'.tr,
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             fontSize: 25),
-                      )),
-                  decoration: BoxDecoration(
-                    color: Colors.orange,
-                  )),
+                      ))),
             ),
             SwitchListTile(
               title: Text(
-                'Dark mode',
+                'darkMode'.tr,
               ),
               secondary: Icon(Icons.dark_mode_outlined),
               value: _darkMode,
@@ -194,8 +195,8 @@ class _ChatPageState extends State<ChatPage> {
               }),
             ),
             SwitchListTile(
-              title: Text('Auto TTS'),
-              secondary: Icon(Icons.speaker_notes_outlined),
+              title: Text('autoTTS'.tr),
+              secondary: const Icon(Icons.speaker_notes_outlined),
               value: _autoTTS,
               activeColor: Colors.orangeAccent,
               onChanged: (value) => setState(() {
@@ -203,8 +204,8 @@ class _ChatPageState extends State<ChatPage> {
               }),
             ),
             ListTile(
-              title: Text('Languages'),
-              leading: Icon(Icons.language),
+              title: Text('languages'.tr),
+              leading: const Icon(Icons.language),
               onTap: () {
                 _buildLanguageBottomSheet(context);
               },
@@ -216,8 +217,8 @@ class _ChatPageState extends State<ChatPage> {
             ),
             ListTile(
               textColor: Colors.redAccent,
-              title: Text('Remove history'),
-              leading: Icon(
+              title: Text('removeHistory'.tr),
+              leading: const Icon(
                 Icons.delete,
                 color: Colors.redAccent,
               ),
@@ -240,11 +241,11 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
+               Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Text(
-                  'Select Language',
-                  style: TextStyle(fontSize: 25),
+                  'Select Language'.tr,
+                  style: const TextStyle(fontSize: 25),
                 ),
               ),
               Row(
@@ -254,7 +255,9 @@ class _ChatPageState extends State<ChatPage> {
                   Column(
                     children: <Widget>[
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.updateLocale(const Locale('en', 'US'));Navigator.pop(context);
+                        },
                         iconSize: 50,
                         icon: Container(
                           decoration: const BoxDecoration(
@@ -279,7 +282,9 @@ class _ChatPageState extends State<ChatPage> {
                   Column(
                     children: <Widget>[
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Get.updateLocale(const Locale('vi', 'VN'));Navigator.pop(context);
+                        },
                         iconSize: 50,
                         icon: Container(
                           decoration: const BoxDecoration(
@@ -298,7 +303,7 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                         ),
                       ),
-                      const Text('Vietnamese (VN)')
+                      const Text('Tiếng Việt (VN)')
                     ],
                   )
                 ],
@@ -336,7 +341,7 @@ class _ChatPageState extends State<ChatPage> {
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(50),
                                 borderSide: BorderSide.none),
-                            hintText: 'Start typing or talking...',
+                            hintText: 'Start typing or talking...'.tr,
                             fillColor: Colors.grey[150],
                             filled: true,
                           ),
@@ -398,7 +403,7 @@ class _ChatPageState extends State<ChatPage> {
                                 minWidth: 55.0,
                               ),
                               isSelected: _speechOptions,
-                              children: const [Text('Touch'), Text('Hold')],
+                              children: [Text('Touch'.tr), Text('Hold'.tr)],
                               onPressed: (int index) {
                                 setState(() {
                                   for (int i = 0;
