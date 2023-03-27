@@ -64,7 +64,6 @@ class _ChatPageState extends State<ChatPage> {
   bool _darkMode = false;
   bool _autoTTS = false;
 
-  String _input = "abc";
   String _hintText = 'holdToTalk'.tr;
   double _confidence = 1.0;
 
@@ -194,8 +193,7 @@ class _ChatPageState extends State<ChatPage> {
               activeColor: Colors.orangeAccent,
               onChanged: (value) => setState(() {
                 _darkMode = value;
-                Get.changeTheme(
-                    _darkMode ?  MyApp.darkTheme: MyApp.lightTheme);
+                Get.changeTheme(_darkMode ? MyApp.darkTheme : MyApp.lightTheme);
               }),
             ),
             SwitchListTile(
@@ -469,13 +467,9 @@ class _ChatPageState extends State<ChatPage> {
       if (available) {
         setState(() => _isListening = true);
         _speech.listen(
+            listenMode: ListenMode.search,
             onResult: (val) => setState(() {
-                  print('onResult $val');
-                  _input = val.recognizedWords;
-                  // _input = val.recognizedWords;
-                  // if (val.hasConfidenceRating && val.confidence > 0) {
-                  //   _confidence = val.confidence;
-                  // }
+                  _textEditingController.text = val.recognizedWords;
                 }));
       }
     } else {
