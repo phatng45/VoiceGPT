@@ -1,16 +1,24 @@
 class Message {
   final String text;
-  final bool isUser;
+  final MessageSender sender;
   final String time;
-  final SystemMessageState state;
+  final BotMessageState state;
+
+ bool isUser() => sender == MessageSender.User;
 
   Message({
-    required this.isUser,
+    required this.sender,
     this.text = '',
     this.time = '00:00',
-    this.state = SystemMessageState.Null});
+    this.state = BotMessageState.Null,
+  });
 }
 
-enum SystemMessageState{
-Null, Loading, Speaking, CanPlay,
+enum MessageSender { User, Bot }
+
+enum BotMessageState {
+  Null,
+  Loading,
+  Speaking,
+  CanPlay,
 }

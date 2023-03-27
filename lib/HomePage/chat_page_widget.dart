@@ -20,43 +20,39 @@ class _ChatPageState extends State<ChatPage> {
 
   final List<Message> _messages = <Message>[
     Message(
-      isUser: true,
+      sender: MessageSender.User,
       text: 'Tell me a good place to go in United States',
     ),
     Message(
-        isUser: false,
+        sender: MessageSender.Bot,
         text: 'IDK, try asking the actual ChatGPT ad  asd asd sadas  as',
-        state: SystemMessageState.CanPlay),
+        state: BotMessageState.CanPlay),
     Message(
-      isUser: true,
+      sender: MessageSender.User,
       text: 'No i want to ask you',
     ),
     Message(
-        isUser: false,
+        sender: MessageSender.Bot,
         text: 'But i really dont know',
-        state: SystemMessageState.Speaking),
+        state: BotMessageState.Speaking),
     Message(
-      isUser: true,
+      sender: MessageSender.User,
       text: 'Fine',
     ),
     Message(
-      isUser: true,
-      text: 'Tell me a good place to go in uy yu yu asd asd',
-    ),
-    Message(
-        isUser: false,
+        sender: MessageSender.Bot,
         text: 'IDK, try asking the actual ChatGPT',
-        state: SystemMessageState.Loading),
+        state: BotMessageState.Loading),
     Message(
-      isUser: true,
+      sender: MessageSender.User,
       text: 'No i want to ask you',
     ),
     Message(
-      isUser: false,
+      sender: MessageSender.Bot,
       text: 'But i really dont know',
     ),
     Message(
-      isUser: true,
+      sender: MessageSender.User,
       text: 'Fine',
     ),
   ];
@@ -149,7 +145,7 @@ class _ChatPageState extends State<ChatPage> {
                     itemCount: _messages.length,
                     itemBuilder: (BuildContext context, int index) {
                       final Message message = _messages[index];
-                      return message.isUser
+                      return message.isUser()
                           ? _buildUserMessage(_messages[index])
                           : _buildSystemMessage(_messages[index]);
                     }),
@@ -505,13 +501,15 @@ class _ChatPageState extends State<ChatPage> {
                             m.text,
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: m.isUser ? Colors.white : Colors.black54,
+                                color:
+                                    m.isUser() ? Colors.white : Colors.black54,
                                 fontSize: 16),
                           ),
                           Text(
                             m.time,
                             style: TextStyle(
-                                color: m.isUser ? Colors.white : Colors.black54,
+                                color:
+                                    m.isUser() ? Colors.white : Colors.black54,
                                 fontSize: 12),
                           ),
                         ],
@@ -589,21 +587,21 @@ class _ChatPageState extends State<ChatPage> {
 
   _buildCurrentVoiceGPTState(Message m) {
     return Container(
-        child: m.state == SystemMessageState.Null
+        child: m.state == BotMessageState.Null
             ? null
-            : m.state == SystemMessageState.Loading
+            : m.state == BotMessageState.Loading
                 ? Padding(
                     padding: const EdgeInsets.only(top: 10.0),
                     child: LoadingAnimationWidget.twoRotatingArc(
                         size: 20, color: Colors.green),
                   )
-                : m.state == SystemMessageState.Speaking
+                : m.state == BotMessageState.Speaking
                     ? Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: LoadingAnimationWidget.beat(
                             size: 20, color: Colors.red),
                       )
-                    : m.state == SystemMessageState.CanPlay
+                    : m.state == BotMessageState.CanPlay
                         ? const Icon(
                             Icons.play_circle_outline_rounded,
                             color: Colors.orange,
