@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicegpt/Models/message_model.dart';
+import 'package:voicegpt/main.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -89,7 +90,8 @@ class _ChatPageState extends State<ChatPage> {
         centerTitle: true,
         title: Text(
           'chat'.tr,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         elevation: 0.0,
         leadingWidth: 120,
@@ -119,7 +121,7 @@ class _ChatPageState extends State<ChatPage> {
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: Icon(Icons.more_horiz),
+              icon: const Icon(Icons.more_horiz),
               iconSize: 30,
               color: Colors.white,
               onPressed: () => Scaffold.of(context).openEndDrawer(),
@@ -142,7 +144,7 @@ class _ChatPageState extends State<ChatPage> {
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20)),
                 child: ListView.builder(
-                    padding: EdgeInsets.only(top: 15),
+                    padding: const EdgeInsets.only(top: 15),
                     itemCount: _messages.length,
                     itemBuilder: (BuildContext context, int index) {
                       final Message message = _messages[index];
@@ -156,18 +158,18 @@ class _ChatPageState extends State<ChatPage> {
           _buildMessageComposer()
         ],
       ),
-      endDrawer: _buildEndDrawer2(context),
+      endDrawer: _buildEndDrawer(context),
     );
   }
 
-  ClipRRect _buildEndDrawer2(BuildContext context) {
+  ClipRRect _buildEndDrawer(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.only(
+      borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
       child: Drawer(
           backgroundColor: Colors.orange.shade50,
           child: ListView(children: [
-             SizedBox(
+            SizedBox(
               height: 120,
               child: DrawerHeader(
                   decoration: const BoxDecoration(
@@ -177,9 +179,9 @@ class _ChatPageState extends State<ChatPage> {
                       alignment: Alignment.bottomLeft,
                       child: Text(
                         'settings'.tr,
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 25),
                       ))),
             ),
@@ -192,6 +194,8 @@ class _ChatPageState extends State<ChatPage> {
               activeColor: Colors.orangeAccent,
               onChanged: (value) => setState(() {
                 _darkMode = value;
+                Get.changeTheme(
+                    _darkMode ?  MyApp.darkTheme: MyApp.lightTheme);
               }),
             ),
             SwitchListTile(
@@ -241,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20.0),
                 child: Text(
                   'Select Language'.tr,
@@ -256,7 +260,8 @@ class _ChatPageState extends State<ChatPage> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          Get.updateLocale(const Locale('en', 'US'));Navigator.pop(context);
+                          Get.updateLocale(const Locale('en', 'US'));
+                          Navigator.pop(context);
                         },
                         iconSize: 50,
                         icon: Container(
@@ -283,7 +288,8 @@ class _ChatPageState extends State<ChatPage> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
-                          Get.updateLocale(const Locale('vi', 'VN'));Navigator.pop(context);
+                          Get.updateLocale(const Locale('vi', 'VN'));
+                          Navigator.pop(context);
                         },
                         iconSize: 50,
                         icon: Container(
@@ -466,9 +472,10 @@ class _ChatPageState extends State<ChatPage> {
             onResult: (val) => setState(() {
                   print('onResult $val');
                   _input = val.recognizedWords;
-                  if (val.hasConfidenceRating && val.confidence > 0) {
-                    _confidence = val.confidence;
-                  }
+                  // _input = val.recognizedWords;
+                  // if (val.hasConfidenceRating && val.confidence > 0) {
+                  //   _confidence = val.confidence;
+                  // }
                 }));
       }
     } else {

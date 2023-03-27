@@ -12,7 +12,18 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  static ThemeData lightTheme = ThemeData(
+    fontFamily: GoogleFonts.nunito().fontFamily,
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    primarySwatch: Colors.orange,
+  );
+
+  static ThemeData darkTheme = ThemeData(
+    fontFamily: GoogleFonts.nunito().fontFamily,
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    primarySwatch: Colors.red,
+  );
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
