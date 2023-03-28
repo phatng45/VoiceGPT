@@ -422,31 +422,51 @@ class _ChatPageState extends State<ChatPage> {
       animate: _isListening,
       endRadius: 75.0,
       curve: Curves.easeInOut,
-      child: RawMaterialButton(
-        onPressed: () => _listen(),
-        elevation: 0.0,
-        fillColor: _isListening
-            ? Theme.of(context).colorScheme.primary
-            : Colors.orange.shade200,
-        padding: const EdgeInsets.fromLTRB(15, 18, 15, 15),
-        shape: const CircleBorder(),
-        child: const Icon(
-          Icons.mic,
-          size: 30.0,
-          color: Colors.white,
+      child: GestureDetector(
+        onTapDown: (tap) {
+          bool holdMode = _speechOptions[1] == true;
+          if (holdMode) {
+            if (!_isListening) {
+              _listen();
+            }
+          }
+        },
+        onTapUp: (tap) {
+          bool holdMode = _speechOptions[1] == true;
+          if (holdMode) {
+            if (_isListening) {
+              _stt.stop();
+              setState(() {
+                _isListening = false;
+              });
+            }
+          }
+        },
+        child: RawMaterialButton(
+          onPressed: () => _listen(),
+          elevation: 0.0,
+          fillColor: _isListening
+              ? Theme.of(context).colorScheme.primary
+              : Colors.orange.shade200,
+          padding: const EdgeInsets.fromLTRB(15, 18, 15, 15),
+          shape: const CircleBorder(),
+          child: const Icon(
+            Icons.mic,
+            size: 30.0,
+            color: Colors.white,
+          ),
         ),
       ),
     );
   }
 
   void _listen() async {
-    // setState(() => _isListening = !_isListening);
-    // return;
     if (!_isListening) {
-      bool available = await _stt.initialize(
-        onStatus: (val) => print('onStatus $val'),
-        onError: (val) => print('onError $val'),
-      );
+      bool available = await _stt.initialize(onError: (val) {
+        setState(() {
+          _isListening = false;
+        });
+      });
       if (available) {
         setState(() => _isListening = true);
         _stt.listen(
