@@ -13,15 +13,41 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   static ThemeData lightTheme = ThemeData(
-    fontFamily: GoogleFonts.nunito().fontFamily,
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    primarySwatch: Colors.orange,
+      fontFamily: GoogleFonts.nunito().fontFamily,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      primarySwatch: Colors.orange,
+      colorScheme: const ColorScheme(
+        primary: Colors.orange,
+        brightness: Brightness.light,
+        onPrimary: Colors.white,
+        secondary: Colors.white,
+        onSecondary: Colors.white,
+        error: Colors.red,
+        onError: Colors.red,
+        background: Colors.white,
+        onBackground: Colors.white,
+        surface: Colors.white,
+        onSurface: Colors.white,
+      )
   );
 
   static ThemeData darkTheme = ThemeData(
-    fontFamily: GoogleFonts.nunito().fontFamily,
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    primarySwatch: Colors.red,
+      fontFamily: GoogleFonts.nunito().fontFamily,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      primarySwatch: Colors.orange,
+      colorScheme: const ColorScheme(
+        primary: Colors.orange,
+        brightness: Brightness.dark,
+        onPrimary: Colors.black,
+        secondary: Colors.black,
+        onSecondary: Colors.black,
+        error: Colors.red,
+        onError: Colors.red,
+        background: Colors.black,
+        onBackground: Colors.black,
+        surface: Colors.black,
+        onSurface: Colors.black,
+      )
   );
 
   @override

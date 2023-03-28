@@ -28,7 +28,9 @@ class _ChatPageState extends State<ChatPage> {
 
   static const String API_KEY =
       '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';
-  // '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'; // HA
+
+  // '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'; // HA.chatgpt
+  // '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'; // HA
 
   final openAI = OpenAI.instance.build(
       token: API_KEY,
@@ -113,11 +115,11 @@ class _ChatPageState extends State<ChatPage> {
         children: [
           Expanded(
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
-                  color: Colors.white),
+                  color: _darkMode ? Colors.grey[900] : Colors.white),
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -147,7 +149,7 @@ class _ChatPageState extends State<ChatPage> {
       borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
       child: Drawer(
-          backgroundColor: Colors.orange.shade50,
+          backgroundColor: _darkMode ? Colors.grey[900] : Colors.orange.shade50,
           child: ListView(children: [
             SizedBox(
               height: 120,
@@ -161,7 +163,7 @@ class _ChatPageState extends State<ChatPage> {
                         'settings'.tr,
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Colors.white,
                             fontSize: 25),
                       ))),
             ),
@@ -213,7 +215,7 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _buildLanguageBottomSheet(BuildContext context) {
     return showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: _darkMode ? Colors.grey[900] : Colors.white,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20), topRight: Radius.circular(20))),
@@ -302,7 +304,7 @@ class _ChatPageState extends State<ChatPage> {
 
   _buildMessageComposer() {
     return Container(
-      color: Colors.white,
+      color: _darkMode ? Colors.grey[900] : Colors.white,
       child: Column(
         children: [
           const Divider(
@@ -373,7 +375,6 @@ class _ChatPageState extends State<ChatPage> {
                             padding: EdgeInsets.zero,
                             height: 40,
                             decoration: const BoxDecoration(
-                                color: Colors.white,
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10))),
                             child: ToggleButtons(
@@ -381,8 +382,7 @@ class _ChatPageState extends State<ChatPage> {
                                   const BorderRadius.all(Radius.circular(10)),
                               selectedBorderColor: Colors.orange[700],
                               selectedColor: Colors.white,
-                              // disabledColor: Colors.white,
-                              // color
+                              borderColor: Colors.orange,
                               fillColor: Colors.orange.shade200,
                               color: Colors.orange[400],
                               constraints: const BoxConstraints(
@@ -479,7 +479,7 @@ class _ChatPageState extends State<ChatPage> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 25, vertical: 12),
                       decoration: BoxDecoration(
-                        color: Colors.grey[200],
+                        color: _darkMode ? Colors.grey[800] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Column(
@@ -491,14 +491,14 @@ class _ChatPageState extends State<ChatPage> {
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color:
-                                    m.isUser() ? Colors.white : Colors.black54,
+                                    _darkMode ? Colors.white : Colors.black54,
                                 fontSize: 16),
                           ),
                           Text(
                             m.time,
                             style: TextStyle(
                                 color:
-                                    m.isUser() ? Colors.white : Colors.black54,
+                                    _darkMode ? Colors.white : Colors.black54,
                                 fontSize: 12),
                           ),
                         ],
@@ -614,6 +614,23 @@ class _ChatPageState extends State<ChatPage> {
     // final request =
     //     CompleteText(prompt: prompt, maxTokens: 200, model: kChatGptTurbo0301Model);
     // CTResponse? response = await openAI.onCompletion(request: request);
+
+    setState(() {
+      String result = 'temporary result';
+
+      _messages.add(
+        Message(
+          sender: MessageSender.Bot,
+          text: result,
+        ),
+      );
+      Future.delayed(const Duration(milliseconds: 50))
+          .then((_) => _scrollDown());
+      _tts.speak(result);
+    });
+
+    return;
+
     final request = CompleteText(prompt: prompt, model: kTextDavinci3);
     CTResponse? response = await openAI.onCompletion(request: request);
     setState(() {
