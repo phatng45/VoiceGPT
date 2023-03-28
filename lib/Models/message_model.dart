@@ -2,7 +2,7 @@ class Message {
   final String text;
   final MessageSender sender;
   final String time;
-  final BotMessageState state;
+  late BotMessageState state;
 
  bool isUser() => sender == MessageSender.User;
 
@@ -10,7 +10,7 @@ class Message {
     required this.sender,
     this.text = '',
     this.time = '00:00',
-    this.state = BotMessageState.Null,
+    this.state = BotMessageState.CanPlay,
   });
 }
 

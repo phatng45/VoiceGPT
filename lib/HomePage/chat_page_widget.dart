@@ -615,18 +615,26 @@ class _ChatPageState extends State<ChatPage> {
     //     CompleteText(prompt: prompt, maxTokens: 200, model: kChatGptTurbo0301Model);
     // CTResponse? response = await openAI.onCompletion(request: request);
 
-    setState(() {
-      String result = 'temporary result';
+    String result = 'temporary result';
+    Message newMessage = Message(
+        sender: MessageSender.Bot,
+        text: result,
+        state: _autoTTS ? BotMessageState.Speaking : BotMessageState.CanPlay);
 
-      _messages.add(
-        Message(
-          sender: MessageSender.Bot,
-          text: result,
-        ),
-      );
+    setState(() {
+      _messages.add(newMessage);
+
+      if (newMessage.state == BotMessageState.Speaking) {
+        _tts.speak(newMessage.text);
+        _tts.setCompletionHandler(() {
+          setState(() {
+            newMessage.state = BotMessageState.CanPlay;
+          });
+        });
+      }
+
       Future.delayed(const Duration(milliseconds: 50))
           .then((_) => _scrollDown());
-      _tts.speak(result);
     });
 
     return;
@@ -646,49 +654,7 @@ class _ChatPageState extends State<ChatPage> {
           .then((_) => _scrollDown());
       _tts.speak(result);
     });
-
-    // final request = ChatCompleteText(messages: [
-    //   Map.of({"role": "user", "content": prompt})
-    // ], maxToken: 200, model: kChatGptTurbo0301Model);
-    //
-    // openAI.onChatCompletionSSE(
-    //     request: request,
-    //     complete: (it) {
-    //       it.map((it) => utf8.decode(it)).listen((response) {
-    //         debugPrint("$response");
-    //         setState(
-    //           () {
-    //             _messages.add(
-    //               Message(
-    //                 sender: MessageSender.Bot,
-    //                 text: response,
-    //               ),
-    //             );
-    //           },
-    //         );
-    //         Future.delayed(const Duration(milliseconds: 50))
-    //             .then((_) => _scrollDown());
-    //       }).onError((e) {
-    //         ///handle error
-    //       });
-    //     });
   }
-
-  // Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
-  // var input = prompt;
-  // var newMessage = await _api.sendMessage(
-  //   input,
-  // );
-  // setState(() {
-  //   _messages.add(
-  //     Message(
-  //       sender: MessageSender.Bot,
-  //       text: newMessage.message,
-  //     ),
-  //   );
-  //   Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
-  //   _tts.speak(newMessage.message);
-  // });
 
   void _scrollDown() {
     _scrollController.animateTo(
