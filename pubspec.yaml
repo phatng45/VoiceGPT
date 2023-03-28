@@ -42,6 +42,8 @@ dependencies:
   flag: ^6.0.0
   get: ^4.6.5
   flutter_chatgpt_api: ^1.1.0
+  flutter_tts: ^3.6.3
+  chat_gpt_sdk: ^2.0.6
 
 dev_dependencies:
   flutter_test:

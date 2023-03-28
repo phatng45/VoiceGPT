@@ -1,6 +1,8 @@
 import 'package:avatar_glow/avatar_glow.dart';
+import 'package:chat_gpt_sdk/chat_gpt_sdk.dart';
 import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -15,49 +17,25 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  late SpeechToText _speech;
+  final SpeechToText _stt = SpeechToText();
+  final FlutterTts _tts = FlutterTts();
+  final ScrollController _scrollController = ScrollController();
+
   late TextEditingController _textEditingController;
 
   final List<bool> _speechOptions = <bool>[false, true];
+  final List<Message> _messages = <Message>[];
 
-  final List<Message> _messages = <Message>[
-    Message(
-      sender: MessageSender.User,
-      text: 'Tell me a good place to go in United States',
-    ),
-    Message(
-        sender: MessageSender.Bot,
-        text: 'IDK, try asking the actual ChatGPT ad  asd asd sadas  as',
-        state: BotMessageState.CanPlay),
-    Message(
-      sender: MessageSender.User,
-      text: 'No i want to ask you',
-    ),
-    Message(
-        sender: MessageSender.Bot,
-        text: 'But i really dont know',
-        state: BotMessageState.Speaking),
-    Message(
-      sender: MessageSender.User,
-      text: 'Fine',
-    ),
-    Message(
-        sender: MessageSender.Bot,
-        text: 'IDK, try asking the actual ChatGPT',
-        state: BotMessageState.Loading),
-    Message(
-      sender: MessageSender.User,
-      text: 'No i want to ask you',
-    ),
-    Message(
-      sender: MessageSender.Bot,
-      text: 'But i really dont know',
-    ),
-    Message(
-      sender: MessageSender.User,
-      text: 'Fine',
-    ),
-  ];
+  static const String API_KEY =
+      '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';
+  // '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'; // HA
+
+  final openAI = OpenAI.instance.build(
+      token: API_KEY,
+      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 100)),
+      isLog: false);
+
+  // what do you think about my existence
 
   bool _isListening = false;
   bool _isTextFieldNotEmpty = false;
@@ -70,7 +48,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _speech = SpeechToText();
     _textEditingController = TextEditingController();
     _textEditingController.addListener(() {
       final isTextFieldNotEmpty = _textEditingController.text.isNotEmpty;
@@ -78,6 +55,9 @@ class _ChatPageState extends State<ChatPage> {
         _isTextFieldNotEmpty = isTextFieldNotEmpty;
       });
     });
+
+    // _api = ChatGPTApi(
+    //     sessionToken: SESSION_TOKEN, clearanceToken: CLEARANCE_TOKEN);
   }
 
   @override
@@ -145,6 +125,7 @@ class _ChatPageState extends State<ChatPage> {
                 child: ListView.builder(
                     padding: const EdgeInsets.only(top: 15),
                     itemCount: _messages.length,
+                    controller: _scrollController,
                     itemBuilder: (BuildContext context, int index) {
                       final Message message = _messages[index];
                       return message.isUser()
@@ -353,7 +334,9 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       _isTextFieldNotEmpty
                           ? IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                _send(_textEditingController.text);
+                              },
                               icon: const Icon(
                                 Icons.send_rounded,
                                 color: Colors.orange,
@@ -460,13 +443,13 @@ class _ChatPageState extends State<ChatPage> {
     // setState(() => _isListening = !_isListening);
     // return;
     if (!_isListening) {
-      bool available = await _speech.initialize(
+      bool available = await _stt.initialize(
         onStatus: (val) => print('onStatus $val'),
         onError: (val) => print('onError $val'),
       );
       if (available) {
         setState(() => _isListening = true);
-        _speech.listen(
+        _stt.listen(
             listenMode: ListenMode.search,
             onResult: (val) => setState(() {
                   _textEditingController.text = val.recognizedWords;
@@ -474,7 +457,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     } else {
       setState(() => _isListening = false);
-      _speech.stop();
+      _stt.stop();
     }
   }
 
@@ -613,5 +596,88 @@ class _ChatPageState extends State<ChatPage> {
                             color: Colors.orange,
                           )
                         : null);
+  }
+
+  void _send(String prompt) async {
+    setState(
+      () {
+        _messages.add(
+          Message(
+            sender: MessageSender.User,
+            text: prompt,
+          ),
+        );
+        _textEditingController.clear();
+      },
+    );
+    Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
+    // final request =
+    //     CompleteText(prompt: prompt, maxTokens: 200, model: kChatGptTurbo0301Model);
+    // CTResponse? response = await openAI.onCompletion(request: request);
+    final request = CompleteText(prompt: prompt, model: kTextDavinci3);
+    CTResponse? response = await openAI.onCompletion(request: request);
+    setState(() {
+      String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
+
+      _messages.add(
+        Message(
+          sender: MessageSender.Bot,
+          text: result,
+        ),
+      );
+      Future.delayed(const Duration(milliseconds: 50))
+          .then((_) => _scrollDown());
+      _tts.speak(result);
+    });
+
+    // final request = ChatCompleteText(messages: [
+    //   Map.of({"role": "user", "content": prompt})
+    // ], maxToken: 200, model: kChatGptTurbo0301Model);
+    //
+    // openAI.onChatCompletionSSE(
+    //     request: request,
+    //     complete: (it) {
+    //       it.map((it) => utf8.decode(it)).listen((response) {
+    //         debugPrint("$response");
+    //         setState(
+    //           () {
+    //             _messages.add(
+    //               Message(
+    //                 sender: MessageSender.Bot,
+    //                 text: response,
+    //               ),
+    //             );
+    //           },
+    //         );
+    //         Future.delayed(const Duration(milliseconds: 50))
+    //             .then((_) => _scrollDown());
+    //       }).onError((e) {
+    //         ///handle error
+    //       });
+    //     });
+  }
+
+  // Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
+  // var input = prompt;
+  // var newMessage = await _api.sendMessage(
+  //   input,
+  // );
+  // setState(() {
+  //   _messages.add(
+  //     Message(
+  //       sender: MessageSender.Bot,
+  //       text: newMessage.message,
+  //     ),
+  //   );
+  //   Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
+  //   _tts.speak(newMessage.message);
+  // });
+
+  void _scrollDown() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
   }
 }
