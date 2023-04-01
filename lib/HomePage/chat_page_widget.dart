@@ -211,6 +211,9 @@ class _ChatPageState extends State<ChatPage> {
                 Icons.delete,
                 color: Colors.redAccent,
               ),
+              onTap: () {
+                _buildConfirmRemoveHistoryDialog(context);
+              },
             ),
           ])),
     );
@@ -703,5 +706,66 @@ class _ChatPageState extends State<ChatPage> {
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeOut,
     );
+  }
+
+  void _buildConfirmRemoveHistoryDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => Dialog(
+                child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Remove history?',
+                    style: TextStyle(fontSize: 22),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  const Text(
+                      'Are you sure you want to delete the conversation? You cannot undo this action.'),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      SizedBox(
+                        width: 85,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            _messages = <Message>[];
+                            _saveMessages();
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.redAccent),
+                            foregroundColor: Colors.redAccent,
+                          ),
+                          child: const Text("Remove"),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      SizedBox(
+                        width: 85,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                          ),
+                          child: const Text("Cancel"),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )));
   }
 }
