@@ -28,26 +28,25 @@ class _ChatPageState extends State<ChatPage> {
   final List<bool> _speechOptions = <bool>[false, true];
   late List<Message> _messages = <Message>[];
 
-  static const String MESSAGE_PREFS_KEY = 'messages_key';
-  static const String API_KEY =
-      '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';
+  static const String MESSAGES_PREF_KEY = 'messages_key';
+  static const String DARK_MODE_PREF_KEY = 'dark_mode_key';
+  static const String AUTO_TTS_PREF_KEY = 'auto_tts_key';
+  static const String LANGUAGE_PREF_KEY = 'language_key';
+  static const String TOUCH_TO_SPEAK_PREF_KEY = 'touch_key';
 
-  // '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'; // HA.chatgpt
-  // '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'; // HA
+  static const String API_KEY = '';
 
-  final openAI = OpenAI.instance.build(
-      token: API_KEY,
-      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 100)),
-      isLog: false);
-
-  // what do you think about my existence
+  // final openAI = OpenAI.instance.build(
+  //     token: API_KEY,
+  //     baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 100)),
+  //     isLog: false);
 
   bool _isListening = false;
   bool _isTextFieldNotEmpty = false;
   bool _darkMode = false;
-  bool _autoTTS = false;
+  bool _autoTTS = true;
 
-  String _hintText = 'holdToTalk'.tr;
+  final String _hintText = 'holdToTalk'.tr;
 
   @override
   void initState() {
@@ -60,6 +59,8 @@ class _ChatPageState extends State<ChatPage> {
         _isTextFieldNotEmpty = isTextFieldNotEmpty;
       });
     });
+
+    _loadSettings();
     _loadMessages().then((value) => {
           setState(() {
             _messages = value;
@@ -121,7 +122,7 @@ class _ChatPageState extends State<ChatPage> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20)),
                   color: _darkMode ? Colors.grey[900] : Colors.white),
@@ -182,6 +183,7 @@ class _ChatPageState extends State<ChatPage> {
               onChanged: (value) => setState(() {
                 _darkMode = value;
                 Get.changeTheme(_darkMode ? MyApp.darkTheme : MyApp.lightTheme);
+                _saveSettings();
               }),
             ),
             SwitchListTile(
@@ -191,6 +193,7 @@ class _ChatPageState extends State<ChatPage> {
               activeColor: Colors.orangeAccent,
               onChanged: (value) => setState(() {
                 _autoTTS = value;
+                _saveSettings();
               }),
             ),
             ListTile(
@@ -251,6 +254,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           Get.updateLocale(const Locale('en', 'US'));
                           Navigator.pop(context);
+                          _saveSettings();
                         },
                         iconSize: 50,
                         icon: Container(
@@ -279,6 +283,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           Get.updateLocale(const Locale('vi', 'VN'));
                           Navigator.pop(context);
+                          _saveSettings();
                         },
                         iconSize: 50,
                         icon: Container(
@@ -405,6 +410,7 @@ class _ChatPageState extends State<ChatPage> {
                                       i < _speechOptions.length;
                                       i++) {
                                     _speechOptions[i] = i == index;
+                                    _saveSettings();
                                   }
                                 });
                               },
@@ -697,38 +703,74 @@ class _ChatPageState extends State<ChatPage> {
           .then((_) => _scrollDown());
     });
 
-    final request = CompleteText(prompt: prompt, model: kTextDavinci3);
-    CTResponse? response = await openAI.onCompletion(request: request);
-    setState(() {
-      String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
-
-      _messages.add(
-        Message(
-          sender: MessageSender.Bot,
-          text: result,
-        ),
-      );
-
-      Future.delayed(const Duration(milliseconds: 50))
-          .then((_) => _scrollDown());
-      _tts.speak(result);
-    });
+    // final request = CompleteText(prompt: prompt, model: kTextDavinci3);
+    // CTResponse? response = await openAI.onCompletion(request: request);
+    // setState(() {
+    //   String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
+    //
+    //   _messages.add(
+    //     Message(
+    //       sender: MessageSender.Bot,
+    //       text: result,
+    //     ),
+    //   );
+    //
+    //   Future.delayed(const Duration(milliseconds: 50))
+    //       .then((_) => _scrollDown());
+    //   _tts.speak(result);
+    // });
   }
 
   void _saveMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(MESSAGE_PREFS_KEY, Message.encode(_messages));
+    await prefs.setString(MESSAGES_PREF_KEY, Message.encode(_messages));
     print('saved');
   }
 
   Future<List<Message>> _loadMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? messagesString = prefs.getString(MESSAGE_PREFS_KEY);
+    final String? messagesString = prefs.getString(MESSAGES_PREF_KEY);
     print('loaded');
     List<Message> messages =
         messagesString != null ? Message.decode(messagesString) : <Message>[];
 
     return messages;
+  }
+
+  void _saveSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(DARK_MODE_PREF_KEY, _darkMode);
+    await prefs.setBool(AUTO_TTS_PREF_KEY, _autoTTS);
+    await prefs.setBool(LANGUAGE_PREF_KEY, Get.locale?.countryCode == 'US');
+    await prefs.setBool(TOUCH_TO_SPEAK_PREF_KEY, _speechOptions[0]);
+
+    print('saved settings');
+  }
+
+  void _loadSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final bool darkMode = prefs.getBool(DARK_MODE_PREF_KEY) ?? false;
+    final bool autoTTS = prefs.getBool(AUTO_TTS_PREF_KEY) ?? true;
+    final bool isEnLanguage = prefs.getBool(LANGUAGE_PREF_KEY) ?? true;
+    final bool isTouchMode = prefs.getBool(TOUCH_TO_SPEAK_PREF_KEY) ?? false;
+
+    setState(() {
+      _darkMode = darkMode;
+      Get.changeTheme(darkMode ? MyApp.darkTheme : MyApp.lightTheme);
+
+      _autoTTS = autoTTS;
+
+      if (isEnLanguage)
+        Get.updateLocale(const Locale('en', 'US'));
+      else
+        Get.updateLocale(const Locale('vn', 'VN'));
+
+      _speechOptions[0] = isTouchMode;
+      _speechOptions[1] = !isTouchMode;
+    });
+
+    print('loaded settings');
   }
 
   void _scrollDown() {
@@ -743,6 +785,7 @@ class _ChatPageState extends State<ChatPage> {
     showDialog(
         context: context,
         builder: (BuildContext context) => Dialog(
+            backgroundColor: _darkMode ? Colors.grey[900] : Colors.white,
             elevation: 0,
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
