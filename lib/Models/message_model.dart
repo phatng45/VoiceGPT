@@ -18,17 +18,17 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> jsonData) {
     return Message(
       text: jsonData['text'],
-      sender: jsonData['sender'],
+      sender: MessageSender.values[jsonData['sender']],
       time: jsonData['time'],
-      state: jsonData['state'],
+      state: BotMessageState.values[jsonData['state']],
     );
   }
 
   static Map<String, dynamic> toMap(Message msg) => {
         'text': msg.text,
-        'sender': msg.sender,
+        'sender': msg.sender.index,
         'time': msg.time,
-        'state': msg.state,
+        'state': msg.state.index,
       };
 
   static String encode(List<Message> msgs) => json.encode(

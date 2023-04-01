@@ -51,7 +51,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-    _loadMessages();
 
     _textEditingController = TextEditingController();
     _textEditingController.addListener(() {
@@ -60,6 +59,11 @@ class _ChatPageState extends State<ChatPage> {
         _isTextFieldNotEmpty = isTextFieldNotEmpty;
       });
     });
+    _loadMessages().then((value) => {
+          setState(() {
+            _messages = value;
+          })
+        });
   }
 
   @override
@@ -680,17 +684,17 @@ class _ChatPageState extends State<ChatPage> {
   void _saveMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(MESSAGE_PREFS_KEY, Message.encode(_messages));
+    print('saved');
   }
 
-  void  _loadMessages() async {
+  Future<List<Message>> _loadMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String messagesString = prefs.getString(MESSAGE_PREFS_KEY) ?? '';
-    print(messagesString);
+    final String? messagesString = prefs.getString(MESSAGE_PREFS_KEY);
+    print('loaded');
+    List<Message> messages =
+        messagesString != null ? Message.decode(messagesString) : <Message>[];
 
-    final List<Message> messages = Message.decode(messagesString);
-    setState(() {
-      _messages = messages;
-    });
+    return messages;
   }
 
   void _scrollDown() {
