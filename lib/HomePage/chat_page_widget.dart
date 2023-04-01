@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicegpt/Models/message_model.dart';
 import 'package:voicegpt/main.dart';
@@ -24,8 +25,9 @@ class _ChatPageState extends State<ChatPage> {
   late TextEditingController _textEditingController;
 
   final List<bool> _speechOptions = <bool>[false, true];
-  final List<Message> _messages = <Message>[];
+  late List<Message> _messages = <Message>[];
 
+  static const String MESSAGE_PREFS_KEY = 'messages_key';
   static const String API_KEY =
       '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';
 
@@ -45,11 +47,12 @@ class _ChatPageState extends State<ChatPage> {
   bool _autoTTS = false;
 
   String _hintText = 'holdToTalk'.tr;
-  double _confidence = 1.0;
 
   @override
   void initState() {
     super.initState();
+    _loadMessages();
+
     _textEditingController = TextEditingController();
     _textEditingController.addListener(() {
       final isTextFieldNotEmpty = _textEditingController.text.isNotEmpty;
@@ -57,9 +60,6 @@ class _ChatPageState extends State<ChatPage> {
         _isTextFieldNotEmpty = isTextFieldNotEmpty;
       });
     });
-
-    // _api = ChatGPTApi(
-    //     sessionToken: SESSION_TOKEN, clearanceToken: CLEARANCE_TOKEN);
   }
 
   @override
@@ -641,6 +641,8 @@ class _ChatPageState extends State<ChatPage> {
         text: result,
         state: _autoTTS ? BotMessageState.Speaking : BotMessageState.CanPlay);
 
+    _saveMessages();
+
     setState(() {
       _messages.add(newMessage);
 
@@ -657,8 +659,6 @@ class _ChatPageState extends State<ChatPage> {
           .then((_) => _scrollDown());
     });
 
-    return;
-
     final request = CompleteText(prompt: prompt, model: kTextDavinci3);
     CTResponse? response = await openAI.onCompletion(request: request);
     setState(() {
@@ -670,9 +670,26 @@ class _ChatPageState extends State<ChatPage> {
           text: result,
         ),
       );
+
       Future.delayed(const Duration(milliseconds: 50))
           .then((_) => _scrollDown());
       _tts.speak(result);
+    });
+  }
+
+  void _saveMessages() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString(MESSAGE_PREFS_KEY, Message.encode(_messages));
+  }
+
+  void  _loadMessages() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String messagesString = prefs.getString(MESSAGE_PREFS_KEY) ?? '';
+    print(messagesString);
+
+    final List<Message> messages = Message.decode(messagesString);
+    setState(() {
+      _messages = messages;
     });
   }
 

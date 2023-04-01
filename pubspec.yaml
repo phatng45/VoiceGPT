@@ -44,6 +44,7 @@ dependencies:
   flutter_chatgpt_api: ^1.1.0
   flutter_tts: ^3.6.3
   chat_gpt_sdk: ^2.0.6
+  shared_preferences: ^2.1.0
 
 dev_dependencies:
   flutter_test:
