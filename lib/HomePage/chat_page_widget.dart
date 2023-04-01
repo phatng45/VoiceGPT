@@ -9,6 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voicegpt/Models/message_model.dart';
+import 'package:voicegpt/api_key.dart';
 import 'package:voicegpt/main.dart';
 
 class ChatPage extends StatefulWidget {
@@ -34,12 +35,10 @@ class _ChatPageState extends State<ChatPage> {
   static const String LANGUAGE_PREF_KEY = 'language_key';
   static const String TOUCH_TO_SPEAK_PREF_KEY = 'touch_key';
 
-  static const String API_KEY = '';
-
-  // final openAI = OpenAI.instance.build(
-  //     token: API_KEY,
-  //     baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 100)),
-  //     isLog: false);
+  final openAI = OpenAI.instance.build(
+      token: OPEN_AI_API_KEY,
+      baseOption: HttpSetup(receiveTimeout: const Duration(seconds: 100)),
+      isLog: false);
 
   bool _isListening = false;
   bool _isTextFieldNotEmpty = false;
