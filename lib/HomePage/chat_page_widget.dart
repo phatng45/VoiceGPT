@@ -4,6 +4,7 @@ import 'package:flag/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -21,7 +22,7 @@ class _ChatPageState extends State<ChatPage> {
   final SpeechToText _stt = SpeechToText();
   final FlutterTts _tts = FlutterTts();
   final ScrollController _scrollController = ScrollController();
-
+  final DateFormat timeFormat = DateFormat("HH:mm");
   late TextEditingController _textEditingController;
 
   final List<bool> _speechOptions = <bool>[false, true];
@@ -659,9 +660,9 @@ class _ChatPageState extends State<ChatPage> {
       () {
         _messages.add(
           Message(
-            sender: MessageSender.User,
-            text: prompt,
-          ),
+              sender: MessageSender.User,
+              text: prompt,
+              time: timeFormat.format(DateTime.now())),
         );
         _textEditingController.clear();
       },
@@ -675,6 +676,7 @@ class _ChatPageState extends State<ChatPage> {
     Message newMessage = Message(
         sender: MessageSender.Bot,
         text: result,
+        time: timeFormat.format(DateTime.now()),
         state: _autoTTS ? BotMessageState.Speaking : BotMessageState.CanPlay);
 
     _saveMessages();
