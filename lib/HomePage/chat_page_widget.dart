@@ -743,7 +743,10 @@ class _ChatPageState extends State<ChatPage> {
     showDialog(
         context: context,
         builder: (BuildContext context) => Dialog(
-                child: Padding(
+            elevation: 0,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15))),
+            child: Padding(
               padding: const EdgeInsets.all(15),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -774,6 +777,9 @@ class _ChatPageState extends State<ChatPage> {
                             Navigator.pop(context);
                           },
                           style: OutlinedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
                             side: const BorderSide(color: Colors.redAccent),
                             foregroundColor: Colors.redAccent,
                           ),
@@ -788,6 +794,9 @@ class _ChatPageState extends State<ChatPage> {
                         child: ElevatedButton(
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
                             elevation: 0,
                           ),
                           child: const Text("Cancel"),
