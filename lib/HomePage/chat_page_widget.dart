@@ -555,7 +555,7 @@ class _ChatPageState extends State<ChatPage> {
       height: 30,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
+          color: _darkMode ? Colors.grey[800] : Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.3),
