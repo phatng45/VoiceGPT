@@ -614,13 +614,42 @@ class _ChatPageState extends State<ChatPage> {
                 : m.state == BotMessageState.Speaking
                     ? Padding(
                         padding: const EdgeInsets.only(top: 10.0),
-                        child: LoadingAnimationWidget.beat(
-                            size: 20, color: Colors.red),
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _tts.stop();
+                              m.state = BotMessageState.CanPlay;
+                            });
+                          },
+                          icon: LoadingAnimationWidget.beat(
+                              size: 20, color: Colors.red),
+                        ),
                       )
                     : m.state == BotMessageState.CanPlay
-                        ? const Icon(
-                            Icons.play_circle_outline_rounded,
-                            color: Colors.orange,
+                        ? IconButton(
+                            onPressed: () {
+                              setState(() {
+                                for (Message message in _messages) {
+                                  message.state = BotMessageState.CanPlay;
+                                }
+
+                                m.state = BotMessageState.Speaking;
+                                _tts.speak(m.text);
+                                _tts.setCompletionHandler(() {
+                                  setState(() {
+                                    m.state = BotMessageState.CanPlay;
+                                  });
+                                });
+                              });
+                            },
+                            icon: const Padding(
+                              padding: EdgeInsets.only(top: 8.0),
+                              child: Icon(
+                                Icons.play_circle_outline_rounded,
+                                color: Colors.orange,
+                                size: 28,
+                              ),
+                            ),
                           )
                         : null);
   }
