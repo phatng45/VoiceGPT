@@ -508,9 +508,8 @@ class _ChatPageState extends State<ChatPage> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 275),
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 25, vertical: 12),
+                      margin: const EdgeInsets.fromLTRB(8, 11, 8, 0),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                       decoration: BoxDecoration(
                         color: _darkMode ? Colors.grey[800] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
@@ -578,8 +577,8 @@ class _ChatPageState extends State<ChatPage> {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 300),
           child: Container(
-            margin: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 12),
+            margin: const EdgeInsets.fromLTRB(8, 11, 8, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             decoration: BoxDecoration(
               color: Colors.orangeAccent,
               borderRadius: BorderRadius.circular(16),
@@ -673,11 +672,28 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
     Future.delayed(const Duration(milliseconds: 50)).then((_) => _scrollDown());
-    // final request =
-    //     CompleteText(prompt: prompt, maxTokens: 200, model: kChatGptTurbo0301Model);
+    final request =
+        CompleteText(prompt: prompt, maxTokens: 100, model: kTextDavinci3);
+    CTResponse? response = await openAI.onCompletion(request: request);
+    String result = response?.choices.first.text.replaceAll('\n', '') ?? 'Error';
+    // final request = CompleteText(prompt: prompt, model: kTextDavinci3);
     // CTResponse? response = await openAI.onCompletion(request: request);
+    // setState(() {
+    //   String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
+    //
+    //   _messages.add(
+    //     Message(
+    //       sender: MessageSender.Bot,
+    //       text: result,
+    //     ),
+    //   );
+    //
+    //   Future.delayed(const Duration(milliseconds: 50))
+    //       .then((_) => _scrollDown());
+    //   _tts.speak(result);
+    // });
 
-    String result = 'temporary result';
+    // String result = 'temporary result';
     Message newMessage = Message(
         sender: MessageSender.Bot,
         text: result,
@@ -701,23 +717,6 @@ class _ChatPageState extends State<ChatPage> {
       Future.delayed(const Duration(milliseconds: 50))
           .then((_) => _scrollDown());
     });
-
-    // final request = CompleteText(prompt: prompt, model: kTextDavinci3);
-    // CTResponse? response = await openAI.onCompletion(request: request);
-    // setState(() {
-    //   String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
-    //
-    //   _messages.add(
-    //     Message(
-    //       sender: MessageSender.Bot,
-    //       text: result,
-    //     ),
-    //   );
-    //
-    //   Future.delayed(const Duration(milliseconds: 50))
-    //       .then((_) => _scrollDown());
-    //   _tts.speak(result);
-    // });
   }
 
   void _saveMessages() async {
