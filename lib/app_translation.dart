@@ -19,6 +19,11 @@ class AppTranslation extends Translations {
     'Touch': 'Touch',
     'Hold': 'Hold',
     'holdToTalk': 'Hold to Talk',
+    "Touch to Stop":"Touch to Stop",
+    "Release to Stop":"Release to Stop",
+    "Touch to Talk":"Touch to Talk",
+    "Hold to Talk": "Hold to Talk",
+
   };
 
   static const Map<String, String> vi_VN = {
@@ -33,5 +38,9 @@ class AppTranslation extends Translations {
     'Touch': 'Chạm',
     'Hold': 'Giữ',
     'holdToTalk': 'Giữ để nói',
+    "Touch to Stop":"Chạm để Dừng",
+    "Release to Stop":"Thả để Dừng",
+    "Touch to Talk":"Chạm để Nói",
+    "Hold to Talk": "Giữ để Nói",
   };
 }

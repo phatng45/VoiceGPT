@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
   bool _darkMode = false;
   bool _autoTTS = true;
 
-  final String _hintText = 'holdToTalk'.tr;
+  late String _hintText = 'holdToTalk'.tr;
 
   @override
   void initState() {
@@ -65,6 +65,7 @@ class _ChatPageState extends State<ChatPage> {
             _messages = value;
           })
         });
+    _updateHintText();
   }
 
   @override
@@ -253,6 +254,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           Get.updateLocale(const Locale('en', 'US'));
                           Navigator.pop(context);
+                          _updateHintText();
                           _saveSettings();
                         },
                         iconSize: 50,
@@ -282,6 +284,7 @@ class _ChatPageState extends State<ChatPage> {
                         onPressed: () {
                           Get.updateLocale(const Locale('vi', 'VN'));
                           Navigator.pop(context);
+                          _updateHintText();
                           _saveSettings();
                         },
                         iconSize: 50,
@@ -409,8 +412,9 @@ class _ChatPageState extends State<ChatPage> {
                                       i < _speechOptions.length;
                                       i++) {
                                     _speechOptions[i] = i == index;
-                                    _saveSettings();
                                   }
+                                  _saveSettings();
+                                  _updateHintText();
                                 });
                               },
                             ),
@@ -429,6 +433,8 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  bool isInHoldMode() => _speechOptions[1] == true;
+
   AvatarGlow _buildMicButton() {
     return AvatarGlow(
       glowColor: Theme.of(context).colorScheme.primary,
@@ -437,26 +443,31 @@ class _ChatPageState extends State<ChatPage> {
       curve: Curves.easeInOut,
       child: GestureDetector(
         onTapDown: (tap) {
-          bool holdMode = _speechOptions[1] == true;
-          if (holdMode) {
-            if (!_isListening) {
-              _listen();
-            }
+          if (!_isListening) {
+            _listen();
+          } else if (!isInHoldMode()) {
+            _stt.stop();
+            setState(() {
+              _isListening = false;
+            });
           }
+
+          _updateHintText();
         },
-        onTapUp: (tap) {
-          bool holdMode = _speechOptions[1] == true;
-          if (holdMode) {
-            if (_isListening) {
-              _stt.stop();
-              setState(() {
-                _isListening = false;
-              });
-            }
+        onTapCancel: () {
+          if (isInHoldMode()) {
+            _stt.stop();
+            setState(() {
+              _isListening = false;
+            });
           }
+
+          _updateHintText();
         },
         child: RawMaterialButton(
-          onPressed: () => _listen(),
+          onPressed: () {
+            _updateHintText();
+          },
           elevation: 0.0,
           fillColor: _isListening
               ? Theme.of(context).colorScheme.primary
@@ -473,24 +484,46 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _listen() async {
-    if (!_isListening) {
-      bool available = await _stt.initialize(onError: (val) {
-        setState(() {
-          _isListening = false;
-        });
-      });
-      if (available) {
-        setState(() => _isListening = true);
-        _stt.listen(
-            listenMode: ListenMode.search,
-            onResult: (val) => setState(() {
-                  _textEditingController.text = val.recognizedWords;
-                }));
+  void _updateHintText() {
+    setState(() {
+      if (_isListening) {
+        if (_speechOptions[0] == true) {
+          _hintText = "Touch to Stop".tr;
+        } else {
+          _hintText = "Release to Stop".tr;
+        }
+      } else {
+        if (_speechOptions[0] == true) {
+          _hintText = "Touch to Talk".tr;
+        } else {
+          _hintText = "Hold to Talk".tr;
+        }
       }
+    });
+  }
+
+  void _listen() async {
+    bool available = await _stt.initialize(onError: (val) {
+      setState(() {
+        _isListening = false;
+        _updateHintText();
+      });
+    });
+    if (available) {
+      setState(() {
+        _isListening = true;
+        _updateHintText();
+      });
+      _stt.listen(
+          listenMode: ListenMode.search,
+          onResult: (val) => setState(() {
+                _textEditingController.text = val.recognizedWords;
+                _updateHintText();
+              }));
     } else {
       setState(() => _isListening = false);
       _stt.stop();
+      _updateHintText();
     }
   }
 
@@ -748,6 +781,7 @@ class _ChatPageState extends State<ChatPage> {
 
       _speechOptions[0] = isTouchMode;
       _speechOptions[1] = !isTouchMode;
+      _updateHintText();
     });
   }
 
