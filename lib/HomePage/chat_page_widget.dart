@@ -509,7 +509,8 @@ class _ChatPageState extends State<ChatPage> {
                     constraints: const BoxConstraints(maxWidth: 275),
                     child: Container(
                       margin: const EdgeInsets.fromLTRB(8, 11, 8, 0),
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 18, vertical: 10),
                       decoration: BoxDecoration(
                         color: _darkMode ? Colors.grey[800] : Colors.grey[200],
                         borderRadius: BorderRadius.circular(16),
@@ -675,25 +676,9 @@ class _ChatPageState extends State<ChatPage> {
     final request =
         CompleteText(prompt: prompt, maxTokens: 100, model: kTextDavinci3);
     CTResponse? response = await openAI.onCompletion(request: request);
-    String result = response?.choices.first.text.replaceAll('\n', '') ?? 'Error';
-    // final request = CompleteText(prompt: prompt, model: kTextDavinci3);
-    // CTResponse? response = await openAI.onCompletion(request: request);
-    // setState(() {
-    //   String result = response?.choices.first.text.replaceAll('\n', '') ?? '';
-    //
-    //   _messages.add(
-    //     Message(
-    //       sender: MessageSender.Bot,
-    //       text: result,
-    //     ),
-    //   );
-    //
-    //   Future.delayed(const Duration(milliseconds: 50))
-    //       .then((_) => _scrollDown());
-    //   _tts.speak(result);
-    // });
+    String result =
+        response?.choices.first.text.replaceAll('\n', '') ?? 'Error';
 
-    // String result = 'temporary result';
     Message newMessage = Message(
         sender: MessageSender.Bot,
         text: result,
@@ -722,13 +707,11 @@ class _ChatPageState extends State<ChatPage> {
   void _saveMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(MESSAGES_PREF_KEY, Message.encode(_messages));
-    print('saved');
   }
 
   Future<List<Message>> _loadMessages() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final String? messagesString = prefs.getString(MESSAGES_PREF_KEY);
-    print('loaded');
     List<Message> messages =
         messagesString != null ? Message.decode(messagesString) : <Message>[];
 
@@ -741,8 +724,6 @@ class _ChatPageState extends State<ChatPage> {
     await prefs.setBool(AUTO_TTS_PREF_KEY, _autoTTS);
     await prefs.setBool(LANGUAGE_PREF_KEY, Get.locale?.countryCode == 'US');
     await prefs.setBool(TOUCH_TO_SPEAK_PREF_KEY, _speechOptions[0]);
-
-    print('saved settings');
   }
 
   void _loadSettings() async {
@@ -759,16 +740,15 @@ class _ChatPageState extends State<ChatPage> {
 
       _autoTTS = autoTTS;
 
-      if (isEnLanguage)
+      if (isEnLanguage) {
         Get.updateLocale(const Locale('en', 'US'));
-      else
+      } else {
         Get.updateLocale(const Locale('vn', 'VN'));
+      }
 
       _speechOptions[0] = isTouchMode;
       _speechOptions[1] = !isTouchMode;
     });
-
-    print('loaded settings');
   }
 
   void _scrollDown() {
